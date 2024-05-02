@@ -1,10 +1,19 @@
 use super::{IndicatorConfig, IndicatorInstance, IndicatorResult};
 use crate::core::{Error, OHLCV};
 
+
+//trait CloneIndicatorInstanceDyn<T: Clone + Sized + OHLCV>: Clone + IndicatorInstanceDyn<T>
+//{
+//}
+
 /// Dynamically dispatchable [`IndicatorConfig`](crate::core::IndicatorConfig)
-pub trait IndicatorConfigDyn<T: OHLCV> {
+pub trait IndicatorConfigDyn<T>
+where
+ T: OHLCV + Clone
+{
+
 	/// Dynamically initializes the **State** based on the current **Configuration**
-	fn init(&self, initial_value: &T) -> Result<Box<dyn IndicatorInstanceDyn<T> + Send + Sync >, Error>;
+	fn init(&self, initial_value: &T) -> Result<Box<dyn  IndicatorInstanceDyn<T> + Send + Sync >, Error>;
 
 	/// Evaluates dynamically dispatched [`IndicatorConfig`](crate::core::IndicatorConfig)  over series of OHLC and returns series of `IndicatorResult`s
 	/// ```
@@ -68,6 +77,8 @@ where
 /// Dynamically dispatchable [`IndicatorInstance`](crate::core::IndicatorInstance)
 pub trait IndicatorInstanceDyn<T: OHLCV + Sized + Clone> {
 	/// Evaluates given candle and returns [`IndicatorResult`](crate::core::IndicatorResult)
+
+
 	fn next(&mut self, candle: &T) -> IndicatorResult;
 
 	/// Evaluates the **State** over the given sequence of candles and returns sequence of `IndicatorResult`s.
@@ -87,8 +98,9 @@ pub trait IndicatorInstanceDyn<T: OHLCV + Sized + Clone> {
 	fn over(&mut self, inputs: &dyn AsRef<[T]>) -> Vec<IndicatorResult>;
 
 	/// Returns a reference to dynamically dispatched **Configuration**, associated with the current **State**
-	fn config(&self) -> &dyn IndicatorConfigDyn<T>;
-
+	/*
+	fn config(&self) -> Box<Self::Config>;
+	*/
 	/// Returns count of indicator's raw values and count of indicator's signals.
 	///
 	/// See more at [`IndicatorConfig`](crate::core::IndicatorConfig::size)
@@ -103,6 +115,7 @@ where
 	T: OHLCV + Sized + Clone,
 	I: IndicatorInstance + Send + Sync + Clone + 'static,
 {
+
 	fn next(&mut self, candle: &T) -> IndicatorResult {
 		IndicatorInstance::next(self, candle)
 	}
@@ -111,9 +124,10 @@ where
 		IndicatorInstance::over(self, inputs)
 	}
 
-	fn config(&self) -> &dyn IndicatorConfigDyn<T> {
+	/*
+	fn config(&self) -> Box<dyn IndicatorConfigDyn<T>> {
 		self.config()
-	}
+	}*/
 
 	fn size(&self) -> (u8, u8) {
 		IndicatorInstance::size(self)
