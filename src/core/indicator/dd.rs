@@ -35,7 +35,7 @@ pub trait IndicatorConfigDyn<T: OHLCV> {
 
 impl<T, I, C> IndicatorConfigDyn<T> for C
 where
-	T: OHLCV,
+	T: OHLCV + Clone,
 	I: IndicatorInstanceDyn<T> + IndicatorInstance<Config = Self> + Sync + Send + Clone + 'static,
 	C: IndicatorConfig<Instance = I> + Clone + 'static,
 {
@@ -66,7 +66,7 @@ where
 }
 
 /// Dynamically dispatchable [`IndicatorInstance`](crate::core::IndicatorInstance)
-pub trait IndicatorInstanceDyn<T: OHLCV + Sized> {
+pub trait IndicatorInstanceDyn<T: OHLCV + Sized + Clone> {
 	/// Evaluates given candle and returns [`IndicatorResult`](crate::core::IndicatorResult)
 	fn next(&mut self, candle: &T) -> IndicatorResult;
 
@@ -100,7 +100,7 @@ pub trait IndicatorInstanceDyn<T: OHLCV + Sized> {
 
 impl<T, I> IndicatorInstanceDyn<T> for I
 where
-	T: OHLCV,
+	T: OHLCV + Sized + Clone,
 	I: IndicatorInstance + Send + Sync + Clone + 'static,
 {
 	fn next(&mut self, candle: &T) -> IndicatorResult {
