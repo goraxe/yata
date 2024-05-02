@@ -4,7 +4,7 @@ use crate::core::{Error, OHLCV};
 /// Dynamically dispatchable [`IndicatorConfig`](crate::core::IndicatorConfig)
 pub trait IndicatorConfigDyn<T: OHLCV> {
 	/// Dynamically initializes the **State** based on the current **Configuration**
-	fn init(&self, initial_value: &T) -> Result<Box<dyn IndicatorInstanceDyn<T> + Send + Sync>, Error>;
+	fn init(&self, initial_value: &T) -> Result<Box<dyn IndicatorInstanceDyn<T> + Send + Sync >, Error>;
 
 	/// Evaluates dynamically dispatched [`IndicatorConfig`](crate::core::IndicatorConfig)  over series of OHLC and returns series of `IndicatorResult`s
 	/// ```
@@ -36,7 +36,7 @@ pub trait IndicatorConfigDyn<T: OHLCV> {
 impl<T, I, C> IndicatorConfigDyn<T> for C
 where
 	T: OHLCV,
-	I: IndicatorInstanceDyn<T> + IndicatorInstance<Config = Self> + Sync + Send + 'static,
+	I: IndicatorInstanceDyn<T> + IndicatorInstance<Config = Self> + Sync + Send + Clone + 'static,
 	C: IndicatorConfig<Instance = I> + Clone + 'static,
 {
 	fn init(&self, initial_value: &T) -> Result<Box<dyn IndicatorInstanceDyn<T> + Send + Sync>, Error> {
@@ -101,7 +101,7 @@ pub trait IndicatorInstanceDyn<T: OHLCV> {
 impl<T, I> IndicatorInstanceDyn<T> for I
 where
 	T: OHLCV,
-	I: IndicatorInstance + Send + Sync + 'static,
+	I: IndicatorInstance + Send + Sync + Clone + 'static,
 {
 	fn next(&mut self, candle: &T) -> IndicatorResult {
 		IndicatorInstance::next(self, candle)
