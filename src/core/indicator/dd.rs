@@ -66,7 +66,7 @@ where
 }
 
 /// Dynamically dispatchable [`IndicatorInstance`](crate::core::IndicatorInstance)
-pub trait IndicatorInstanceDyn<T: OHLCV> {
+pub trait IndicatorInstanceDyn<T: OHLCV + Sized> {
 	/// Evaluates given candle and returns [`IndicatorResult`](crate::core::IndicatorResult)
 	fn next(&mut self, candle: &T) -> IndicatorResult;
 
