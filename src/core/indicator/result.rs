@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 /// Every `Indicator` proceed an input of [`OHLCV`](crate::core::OHLCV) and returns an `IndicatorResult` which consist of some returned raw values and some calculated signals.
 ///
 /// `Indicator` may return up to 4 signals and 4 raw values at each step
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[allow(clippy::use_self)]
 pub struct IndicatorResult {

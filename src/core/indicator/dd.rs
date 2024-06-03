@@ -75,7 +75,8 @@ where
 }
 
 /// Dynamically dispatchable [`IndicatorInstance`](crate::core::IndicatorInstance)
-pub trait IndicatorInstanceDyn<T: OHLCV + Sized + Clone> {
+pub trait IndicatorInstanceDyn<T: OHLCV + Sized + Clone>
+{
 	/// Evaluates given candle and returns [`IndicatorResult`](crate::core::IndicatorResult)
 
 
@@ -93,6 +94,8 @@ pub trait IndicatorInstanceDyn<T: OHLCV + Sized + Clone> {
 	/// let mut state = dyn_config.init(&candles[0]).unwrap();
 	///
 	/// let results = state.over(&candles);
+	/// let foo = results.clone();
+	/// println!("{:?}", foo);
 	/// println!("{:?}", results);
 	/// ```
 	fn over(&mut self, inputs: &dyn AsRef<[T]>) -> Vec<IndicatorResult>;
