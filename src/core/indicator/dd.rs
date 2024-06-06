@@ -1,3 +1,5 @@
+use std::fmt::Debug;
+
 use super::{IndicatorConfig, IndicatorInstance, IndicatorResult};
 use crate::core::{Error, OHLCV};
 
@@ -9,7 +11,7 @@ use crate::core::{Error, OHLCV};
 /// Dynamically dispatchable [`IndicatorConfig`](crate::core::IndicatorConfig)
 pub trait IndicatorConfigDyn<T>
 where
- T: OHLCV + Clone
+ T: OHLCV + Clone + Debug,
 {
 
 	/// Dynamically initializes the **State** based on the current **Configuration**
@@ -44,7 +46,7 @@ where
 
 impl<T, I, C> IndicatorConfigDyn<T> for C
 where
-	T: OHLCV + Clone,
+	T: OHLCV + Clone + Debug,
 	I: IndicatorInstanceDyn<T> + IndicatorInstance<Config = Self> + Sync + Send + Clone + 'static,
 	C: IndicatorConfig<Instance = I> + Clone + 'static,
 {
